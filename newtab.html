@@ -1,0 +1,94 @@
+
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FridAI</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" type="image/png" href="ico.png">
+</head>
+<body>
+<header class="header">
+  <div class="brand"><img src="fridai_logo.png" class="logo"><span id="ver" style="color:var(--muted);font-size:12px"></span></div>
+  <div class="searchbar"><input id="hdrSearch" placeholder="Filter tools (Cmd/Ctrl+K)…"></div>
+  <div class="buttons"><button id="btnOpt">⚙️</button></div>
+</header>
+<main class="grid">
+  <section>
+    <div class="card" id="cardCity">
+      <!---<h2>Weather & Time</h2>--->
+      <div class="body">
+        <div id="cityBlock"></div>
+      </div>
+    </div>
+
+    <div class="card" id="cardIran">
+      <!---<h3>Iran Time & Persian Calendar</h3>--->
+      <div class="body">
+        <div id="iranBlock"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><button class="iconbtn" id="calRefresh">↻</button>Calendar</h3>
+      <div class="body">
+        <div id="calList"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="card">
+      <h2>Search</h2>
+      <div class="body">
+        <input id="qs" class="flex1" placeholder="Ask or search…">
+        <div class="providers">
+          <div class="provider" data-p="google">Google</div>
+          <div class="provider" data-p="chatgpt">ChatGPT</div>
+          <div class="provider" data-p="perplexity">Perplexity</div>
+          <div class="provider" data-p="ddg">DuckDuckGo</div>
+          
+          <div class="provider" data-p="pubmed">PubMed</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>AI Tools</h2>
+      <div class="body">
+        <div class="row right"><input id="toolFilter" placeholder="Filter by name…"><input id="toolTag" placeholder="Filter by tag…"></div>
+        <div id="tools" class="gridtools"></div>
+        <div class="subrow">Add/edit tools in Settings.</div>
+      </div>
+    </div>
+
+    <div class="card" style="position:sticky;bottom:10px">
+      <h3>Logs</h3>
+      <div class="body">
+        <div class="row right"><button id="logClear">Clear</button></div>
+        <div id="log" class="log"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="card">
+      <h3><button class="iconbtn" id="todayRefresh">↻</button> Today</h3>
+      <div class="body">
+        
+        <div id="todayList"></div>
+        <div class="subrow" id="todayCount"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2><button class="iconbtn" id="feedsRefresh">↻</button> Feeds</h2>
+      <div class="body">
+        <div class="row wrap"><select id="feedSelect"><option value="all">All feeds</option></select></div>
+        <div id="feedsList"></div>
+        <div id="feedErr" class="subrow" style="color:#ff6b6b"></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="footer"><span id="status"></span></footer>
+<script src="app.js"></script>
+<div id="toast" class="toast"></div>
+</body></html>
