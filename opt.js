@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', ()=>{
   const back=document.getElementById('btnBack'); if(back){ back.addEventListener('click', ()=> { window.location.href = chrome.runtime.getURL('newtab.html'); }); }
   const saveTop = document.getElementById('btnSaveTop');
@@ -39,7 +38,7 @@ function save(k,v){return chrome.storage.sync.set({[k]:v})}
       const id=row.getAttribute('data-id');
       row.querySelector('.d').onclick=async()=>{const {feeds=[]}=await chrome.storage.sync.get('feeds'); const i=feeds.findIndex(x=>x.id===id); if(i>=0) feeds.splice(i,1); await chrome.storage.sync.set({feeds}); renderFeeds();};
       ['t','u','g','e'].forEach(cls=>{
-        row.querySelector('.'+cls).onchange=async()=>{
+        row.querySelector('.'+cls).onchange=async()=>{ 
           const {feeds=[]}=await chrome.storage.sync.get('feeds'); const f=feeds.find(x=>x.id===id); if(!f) return;
           f.title=row.querySelector('.t').value.trim()||f.title; f.url=row.querySelector('.u').value.trim()||f.url; f.tags=row.querySelector('.g').value.split(',').map(s=>s.trim()).filter(Boolean); f.enabled=row.querySelector('.e').checked;
           await chrome.storage.sync.set({feeds});
@@ -88,7 +87,6 @@ function save(k,v){return chrome.storage.sync.set({[k]:v})}
     document.getElementById('addCard').style.display='block';
     document.getElementById('addUrl').textContent = u;
     document.getElementById('addTitle').textContent = t;
-    function showToast(msg,timeout=2200){ const el=document.getElementById('toast'); if(!el) return; el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),timeout); }
 
     document.getElementById('addAsTool').onclick = async ()=>{
       const {tools=[]} = await chrome.storage.sync.get('tools');
@@ -100,10 +98,10 @@ function save(k,v){return chrome.storage.sync.set({[k]:v})}
     document.getElementById('detectAddFeed').onclick = async ()=>{ 
       try{
         let html=''; let usedProxy=false;
-        try{ const res = await fetch(u); html = await res.text(); }
+        try{ const res = await fetch(u); html = await res.text(); } 
         catch(e){
           // direct fetch failed (likely CORS) — try AllOrigins proxy as a fallback
-          try{ const p = await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(u)); html = await p.text(); usedProxy=true; }
+          try{ const p = await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(u)); html = await p.text(); usedProxy=true; } 
           catch(e2){
             // as a last resort, check if user enabled built-in proxy setting
             const settings = await load('settings',{});
@@ -123,7 +121,7 @@ function save(k,v){return chrome.storage.sync.set({[k]:v})}
   }
 
   // Export / Import
-  document.getElementById('exportAll').onclick = async ()=>{
+  document.getElementById('exportAll').onclick = async ()=>{ 
     const keys = await chrome.storage.sync.get(null);
     const blob = new Blob([JSON.stringify(keys, null, 2)], {type:'application/json'});
     const url = URL.createObjectURL(blob);
@@ -159,8 +157,8 @@ function save(k,v){return chrome.storage.sync.set({[k]:v})}
   customAuthHeader.value = custom.authHeader || 'Authorization';
   customModelInput.value = custom.model || '';
   // model select wiring
-  modelSelect.value = custom.model || 'meta-llama-3.1-8b-instruct';
-  if(!['meta-llama-3.1-8b-instruct','gpt-3.5-turbo','gpt-4'].includes(modelSelect.value)){
+  modelSelect.value = custom.model || 'meta-llama-3.1-70b-instruct';
+  if(!['meta-llama-3.1-8b-instruct','meta-llama-3.1-70b-instruct','openai-gpt-oss-120b','meta-llama-3.1-8b-rag','llama-3.1-sauerkrautlm-70b-instruct','llama-3.3-70b-instruct','gemma-3-27b-it','medgemma-27b-it','teuken-7b-instruct-research','mistral-large-instruct','qwen3-32b','qwen3-235b-a22b','qwen2.5-coder-32b-instruct','codestral-22b','internvl2.5-8b','qwen2.5-vl-72b-instruct','qwq-32b','deepseek-r1','gpt-3.5-turbo','gpt-4'].includes(modelSelect.value)){
     modelSelect.value='custom'; customModelInput.style.display='inline-block';
   }
   modelSelect.onchange = ()=>{ if(modelSelect.value==='custom'){ customModelInput.style.display='inline-block'; } else { customModelInput.style.display='none'; } };
@@ -174,8 +172,8 @@ function save(k,v){return chrome.storage.sync.set({[k]:v})}
     customPath.value = '/chat/completions';
     customAuthHeader.value = 'Authorization';
     // pick a sensible default model if none set
-    if(!customModelInput.value) customModelInput.value = 'meta-llama-3.1-8b-instruct';
-    modelSelect.value = customModelInput.value || 'meta-llama-3.1-8b-instruct';
+    if(!customModelInput.value) customModelInput.value = 'meta-llama-3.1-70b-instruct';
+    modelSelect.value = customModelInput.value || 'meta-llama-3.1-70b-instruct';
     customFields.style.display = 'block';
   }
 
@@ -220,17 +218,27 @@ function save(k,v){return chrome.storage.sync.set({[k]:v})}
 
       // build url and payload
       const provider = cfg.provider||'openai';
-      const base = (cfg.base||'').replace(/\/$/,''); const path = cfg.path||'/v1/completions';
-      const url = provider==='openai' ? 'https://api.openai.com/v1/models' : (base + (path.startsWith('/')?path:('/'+path)));
+      const base = (cfg.base||'').replace(///$/,'');
+      let path = cfg.path||'';
+      // If base ends with /v1 and path is empty, it's likely a misconfiguration.
+      // The user probably wants to use /chat/completions.
+      if (base.endsWith('/v1') && (!path || path === '/')) {
+        path = '/chat/completions';
+      }
+      let path = cfg.path || '';
+      if (base.endsWith('/v1') && (!path || path === '/')) {
+        path = '/chat/completions';
+      }
+      const url = provider === 'openai' ? 'https://api.openai.com/v1/chat/completions' : (base + (path.startsWith('/') ? path : ('/' + path)));
       // Build headers safely: allow "Name: value" or just "Name" which will use the provided key
-      let headers = {'Content-Type':'application/json'};
+      let headers = {'Content-Type':'application/json','Accept': 'application/json'};
       const hdrSpec = (cfg.hdr||'Authorization');
       let hdrName = 'Authorization'; let hdrValue = key;
       if(hdrSpec.includes(':')){
         const parts = hdrSpec.split(':'); hdrName = parts[0].trim(); const maybeVal = parts.slice(1).join(':').trim(); hdrValue = maybeVal || ((hdrName.toLowerCase()==='authorization')?('Bearer '+key):key);
       } else { hdrName = hdrSpec.trim(); hdrValue = (hdrName.toLowerCase()==='authorization')?('Bearer '+key):key; }
       headers[hdrName] = hdrValue;
-      const payload = (path||'').toLowerCase().includes('completions') ? { model: cfg.model||'meta-llama-3.1-8b-instruct', prompt: 'Test request: say ok', max_tokens: 5, temperature: 0 } : { model: 'gpt-3.5-turbo' };
+      const payload = { model: cfg.model||'meta-llama-3.1-70b-instruct', messages: [{'role':'user','content':'Test request: say ok'}], max_tokens: 15, temperature: 0 };
       // redacted headers for display
       const displayHeaders = Object.assign({}, headers); displayHeaders[hdrName] = (hdrName.toLowerCase()==='authorization') ? 'Bearer *****' : '*****';
       setReq(JSON.stringify({ url, headers: displayHeaders, payload }, null, 2));
@@ -279,7 +287,7 @@ function save(k,v){return chrome.storage.sync.set({[k]:v})}
   }
 
   // Save max calendar events when changed
-  $("#maxCalEvents").addEventListener('change', async ()=>{
+  $("#maxCalEvents").addEventListener('change', async ()=>{ 
     const v = parseInt($("#maxCalEvents").value||'10',10) || 10;
     const settings = await load('settings',{});
     settings.maxCalendarEvents = v;
