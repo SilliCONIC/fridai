@@ -218,14 +218,10 @@ function save(k,v){return chrome.storage.sync.set({[k]:v})}
 
       // build url and payload
       const provider = cfg.provider||'openai';
-      const base = (cfg.base||'').replace(///$/,'');
-      let path = cfg.path||'';
+      const base = (cfg.base||'').replace(/\/$/,'');
+      let path = cfg.path || '';
       // If base ends with /v1 and path is empty, it's likely a misconfiguration.
       // The user probably wants to use /chat/completions.
-      if (base.endsWith('/v1') && (!path || path === '/')) {
-        path = '/chat/completions';
-      }
-      let path = cfg.path || '';
       if (base.endsWith('/v1') && (!path || path === '/')) {
         path = '/chat/completions';
       }
