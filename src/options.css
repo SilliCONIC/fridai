@@ -1,0 +1,21 @@
+/* Override global styles for Options page */
+html,
+body {
+    height: auto !important;
+    /* Allow growing */
+    overflow: auto !important;
+    /* Allow global scrolling */
+    display: block !important;
+    /* Reset flex */
+}
+
+body {
+    background: var(--bg);
+}
+
+.header {
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}

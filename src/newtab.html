@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FridAI</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" href="ico.png">
+</head>
+
+<body>
+  <header class="header">
+    <div class="brand"><img src="fridai_logo.png" class="logo"><span id="ver"
+        style="color:var(--muted);font-size:12px"></span></div>
+    <!-- SearchBar in Header -->
+    <div class="searchbar" style="flex:1; display:flex; gap:8px; align-items:center; max-width:800px; margin:0 16px;">
+      <input id="qs" style="flex:1" placeholder="Search…">
+      <div class="providers" style="margin-top:0; gap:4px">
+        <div class="provider" data-p="google">Google</div>
+        <div class="provider" data-p="chatgpt">ChatGPT</div>
+        <div class="provider" data-p="perplexity">Perplexity</div>
+        <div class="provider" data-p="ddg">DDG</div>
+        <div class="provider" data-p="pubmed">PubMed</div>
+      </div>
+    </div>
+    <div class="buttons"><button id="btnOpt">⚙️</button></div>
+  </header>
+  <main class="grid">
+    <!-- COLUMN 1: Weather, Time, Calendar -->
+    <section class="col">
+      <div class="card" id="cardCity">
+        <div class="body">
+          <div id="cityBlock"></div>
+        </div>
+      </div>
+
+      <div class="card" id="cardIran">
+        <div class="body">
+          <div id="iranBlock"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><button class="iconbtn" id="calRefresh">↻</button>Calendar</h3>
+        <div class="body">
+          <div id="calList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLUMN 2: Chat (Main) -->
+    <section class="col center">
+      <!-- Chat Fills Height -->
+      <div class="card" style="flex:1; display:flex; flex-direction:column; padding-bottom:10px;">
+        <h2 style="margin-bottom:4px">Chat with AI</h2>
+        <div class="body" id="chatBody">
+          <div id="chatMessages"></div>
+          <div class="row">
+            <input id="chatInput" type="text" placeholder="Type a message...">
+            <button id="chatSend">Send</button>
+          </div>
+          <select id="modelSelect"></select>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLUMN 3: Today, Feeds, Tools, Logs -->
+    <section class="col">
+      <div class="card">
+        <h3><button class="iconbtn" id="todayRefresh">↻</button> Today</h3>
+        <div class="body">
+          <div id="todayList"></div>
+          <div class="subrow" id="todayCount"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><button class="iconbtn" id="feedsRefresh">↻</button> Feeds</h2>
+        <div class="body">
+          <div class="row wrap"><select id="feedSelect">
+              <option value="all">All feeds</option>
+            </select></div>
+          <div id="feedsList"></div>
+          <div id="feedErr" class="subrow" style="color:#ff6b6b"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>AI Tools</h2>
+        <div class="body">
+          <div class="row right">
+            <input id="cardToolFilter" placeholder="Filter by name…">
+            <input id="toolTag" placeholder="Filter by tag…">
+          </div>
+          <div id="tools" class="gridtools"></div>
+          <div class="subrow">Add/edit tools in Settings.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Logs</h3>
+        <div class="body">
+          <div class="row right"><button id="logClear">Clear</button></div>
+          <div id="log" class="log"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer"><span id="status"></span></footer>
+  <script type="module" src="main.js"></script>
+  <div id="toast" class="toast"></div>
+</body>
+
+</html>

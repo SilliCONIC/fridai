@@ -1,0 +1,39 @@
+{
+    "manifest_version": 3,
+    "name": "FridAI",
+    "version": "3.0.0",
+    "description": "Stable new-tab: weather/time (Tehran+Jalali), feeds (Today above), tools, quick search, calendar list, logs. Single-file JS to avoid module issues.",
+    "chrome_url_overrides": {
+        "newtab": "newtab.html"
+    },
+    "icons": {
+        "16": "ico.png",
+        "32": "ico.png",
+        "48": "ico.png",
+        "128": "ico.png"
+    },
+    "action": {
+        "default_icon": {
+            "16": "ico.png",
+            "32": "ico.png",
+            "48": "ico.png",
+            "128": "ico.png"
+        }
+    },
+    "permissions": [
+        "storage",
+        "contextMenus",
+        "activeTab",
+        "scripting"
+    ],
+    "host_permissions": [
+        "https://api.open-meteo.com/*",
+        "https://geocoding-api.open-meteo.com/*",
+        "*://*/*"
+    ],
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "options_page": "options.html"
+}

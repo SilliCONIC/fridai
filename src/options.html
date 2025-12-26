@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>FridAI Options</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="options.css">
+  <link rel="icon" type="image/png" href="ico.png">
+</head>
+
+<body>
+  <header class="header">
+    <div class="brand"><img src="fridai_logo.png" class="logo">FridAI • Options</div>
+    <div></div>
+    <div class="buttons"><button id="btnSaveTop" class="primary">Save</button><button id="btnBack">Back</button></div>
+  </header>
+  <main style="padding:16px;max-width:1000px;margin:0 auto">
+    <div id="addCard" class="card" style="display:none">
+      <h2>Add page</h2>
+      <div class="body">
+        <div class="subrow">URL: <span id="addUrl"></span></div>
+        <div class="subrow">Title: <span id="addTitle"></span></div>
+        <div class="row" style="margin-top:8px"><button id="addAsTool">Add as Tool</button><button
+            id="detectAddFeed">Detect & Add Feeds</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Feed Settings & UI</h2>
+      <div class="body">
+        <label><input type="checkbox" id="useProxy"> Use CORS proxy fallback</label><br>
+        <label><input type="checkbox" id="autoSumm"> Auto-summarize new items for Today</label>
+        <div class="row"><label>Max summaries per feed <input id="maxSumm" type="number" value="3"
+              style="width:80px"></label></div>
+        <label><input type="checkbox" id="hideFooter"> Hide footer credit</label>
+        <div class="row right"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Feeds — Manager</h2>
+      <div class="body">
+        <div class="row wrap"><input id="addFeedUrl" class="flex1" placeholder="Add feed URL or website"><button
+            id="addFeed">Add</button></div>
+        <div id="feeds"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Tools — Manager</h2>
+      <div class="body">
+        <div class="row wrap"><input id="addToolUrl" class="flex1" placeholder="Add tool URL"><input id="addToolName"
+            placeholder="Name" style="width:180px"><button id="addTool">Add</button></div>
+        <div id="toolsManager"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>AI / Summaries</h2>
+      <div class="body">
+        <label>Provider: <select id="aiProvider">
+            <option value="openai">OpenAI</option>
+            <option value="academiccloud">Chat-AI (academiccloud)</option>
+            <option value="custom">Custom</option>
+          </select></label>
+        <div class="row" style="margin-top:8px"><input id="aiKey" type="password" class="flex1"
+            placeholder="API Key"><button id="testAiKey">Test Key</button></div>
+        <label><input type="checkbox" id="storeKeyLocal"> Store API key locally (do not sync)</label>
+        <div id="customProviderFields" style="margin-top:8px;display:none">
+          <div class="subrow">Custom provider settings</div>
+          <div class="row wrap"><input id="customBase" class="flex1"
+              placeholder="Base URL (e.g. https://api.example.com)"><input id="customPath"
+              placeholder="Path (e.g. /v1/chat/completions)"></div>
+          <div class="row" style="margin-top:6px"><input id="customAuthHeader" class="flex1"
+              placeholder="Auth header name (e.g. Authorization or x-api-key)"></div>
+          <div class="row" style="margin-top:6px"><label style="width:160px">Model:</label><select id="modelSelect"
+              style="flex:1;margin-right:8px">
+              <option value="meta-llama-3.1-8b-instruct">meta-llama-3.1-8b-instruct</option>
+              <option value="meta-llama-3.1-70b-instruct">meta-llama-3.1-70b-instruct</option>
+              <option value="openai-gpt-oss-120b">openai-gpt-oss-120b</option>
+              <option value="meta-llama-3.1-8b-rag">meta-llama-3.1-8b-rag</option>
+              <option value="llama-3.1-sauerkrautlm-70b-instruct">llama-3.1-sauerkrautlm-70b-instruct</option>
+              <option value="llama-3.3-70b-instruct">llama-3.3-70b-instruct</option>
+              <option value="gemma-3-27b-it">gemma-3-27b-it</option>
+              <option value="medgemma-27b-it">medgemma-27b-it</option>
+              <option value="teuken-7b-instruct-research">teuken-7b-instruct-research</option>
+              <option value="mistral-large-instruct">mistral-large-instruct</option>
+              <option value="qwen3-32b">qwen3-32b</option>
+              <option value="qwen3-235b-a22b">qwen3-235b-a22b</option>
+              <option value="qwen2.5-coder-32b-instruct">qwen2.5-coder-32b-instruct</option>
+              <option value="codestral-22b">codestral-22b</option>
+              <option value="internvl2.5-8b">internvl2.5-8b</option>
+              <option value="qwen2.5-vl-72b-instruct">qwen2.5-vl-72b-instruct</option>
+              <option value="qwq-32b">qwq-32b</option>
+              <option value="deepseek-r1">deepseek-r1</option>
+              <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+              <option value="gpt-4">gpt-4</option>
+              <option value="custom">Custom...</option>
+            </select><input id="customModel" class="flex1" placeholder="Custom model id" style="display:none"></div>
+        </div>
+        <div class="subrow">Provide an API key and provider info. Toggle local storage to avoid syncing keys to your
+          account.</div>
+      </div>
+
+    </div>
+
+    <div class="card">
+      <h2>Import / Export</h2>
+      <div class="body">
+        <div class="row"><button id="exportAll">Export settings & data</button><button id="importBtn">Import
+            JSON</button><input id="importFile" type="file" accept="application/json" style="display:none"></div>
+        <div class="subrow">Export a JSON backup of settings, feeds and tools; import will replace these sections.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Calendar — Sources</h2>
+      <div class="body">
+        <div class="row wrap"><input id="addIcsUrl" class="flex1" placeholder="Add ICS/webcal URL…"><button
+            id="addIcs">Add</button></div>
+        <div class="row" style="margin-top:8px"><label>Max events to show <input id="maxCalEvents" type="number"
+              value="10" style="width:80px;margin-left:8px"></label></div>
+        <div id="ics"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>City — Default Location</h2>
+      <div class="body">
+        <div class="row wrap"><input id="optCity" class="flex1" placeholder="Search city (e.g., Göttingen)"><button
+            id="optCityFind">Find</button></div>
+        <div id="optCityResults" style="margin-top:8px"></div>
+        <div class="subrow">Tip: After selecting a city here, open a new tab.</div>
+      </div>
+    </div>
+  </main>
+  <script type="module" src="options.js"></script>
+  <div id="toast" class="toast"></div>
+</body>
+
+</html>
