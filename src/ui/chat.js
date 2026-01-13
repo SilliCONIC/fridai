@@ -35,6 +35,11 @@ export function initChat() {
     const input = document.getElementById('chatInput');
     const modelSelect = document.getElementById('modelSelect');
 
+    if (!sendBtn || !input || !modelSelect) {
+        console.error('Chat elements not found', { sendBtn, input, modelSelect });
+        return;
+    }
+
     let currentImage = null; // Base64 string if attached
 
     // Controls Container
@@ -240,8 +245,19 @@ export function initChat() {
         fileInp.value = '';
     };
 
-    sendBtn?.addEventListener('click', doSend);
-    input?.addEventListener('keydown', e => { if (e.key === 'Enter') doSend(); });
+    if (sendBtn) sendBtn.addEventListener('click', doSend);
+
+    if (input) {
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                if (!e.shiftKey) {
+                    e.preventDefault(); // Prevent newline
+                    doSend();
+                }
+                // else: allow default behavior (newline)
+            }
+        });
+    }
 }
 
 function addMessage(role, content, metadata = {}) {
@@ -259,6 +275,7 @@ function addMessage(role, content, metadata = {}) {
     // Content
     const contentDiv = document.createElement('div');
     contentDiv.className = 'msg-content';
+    contentDiv.dir = 'auto'; // Enable automatic RTL/LTR detection
     if (metadata.isHtml) contentDiv.innerHTML = content;
     else contentDiv.textContent = content;
 

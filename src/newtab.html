@@ -52,15 +52,19 @@
     <!-- COLUMN 2: Chat (Main) -->
     <section class="col center">
       <!-- Chat Fills Height -->
-      <div class="card" style="flex:1; display:flex; flex-direction:column; padding-bottom:10px;">
+      <div class="card chat-card">
         <h2 style="margin-bottom:4px">Chat with AI</h2>
         <div class="body" id="chatBody">
           <div id="chatMessages"></div>
-          <div class="row">
-            <input id="chatInput" type="text" placeholder="Type a message...">
-            <button id="chatSend">Send</button>
+          <div class="row chat-footer">
+            <div style="width:100%; display:flex; flex-direction:column; gap:8px">
+              <div class="row" style="width:100%">
+                <textarea id="chatInput" placeholder="Type a message..." rows="1" dir="auto"></textarea>
+                <button id="chatSend">Send</button>
+              </div>
+              <select id="modelSelect"></select>
+            </div>
           </div>
-          <select id="modelSelect"></select>
         </div>
       </div>
     </section>
