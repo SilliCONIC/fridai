@@ -41,6 +41,7 @@ export function initChat() {
     }
 
     let currentImage = null; // Base64 string if attached
+    let conversationHistory = []; // Array of {role: 'user'|'assistant', content: string|array}
 
     // Controls Container
     const controls = document.createElement('div');
@@ -217,17 +218,33 @@ export function initChat() {
 
         addMessage('assistant', 'Thinking...', { pending: true, model: modelName });
 
-        chrome.runtime.sendMessage({
+        // Prepare User Message Content for History
+        let userContent = message;
+        if (currentImage) {
+            userContent = [
+                { type: "text", text: message },
+                { type: "image_url", image_url: { url: currentImage } }
+            ];
+        }
+
+        // Add to history
+        conversationHistory.push({ role: 'user', content: userContent });
+
+        // Build Payload
+        const payload = {
             type: 'chat_request',
-            message: message,
             model: modelId,
-            images: currentImage ? [currentImage] : null
-        }, (response) => {
+            history: conversationHistory // Send full history
+        };
+
+        chrome.runtime.sendMessage(payload, (response) => {
             const pending = document.querySelector('.message.pending');
             if (pending) pending.remove();
 
             if (response && response.text) {
                 let text = response.text;
+                conversationHistory.push({ role: 'assistant', content: text }); // Add response to history
+
                 let isHtml = false;
                 // Handle <think> blocks from reasoning models
                 if (text.includes('<think>')) {
@@ -237,6 +254,9 @@ export function initChat() {
                 }
                 addMessage('assistant', text, { model: modelName, isHtml: isHtml });
             } else {
+                // On error, remove the last user message from history so they can retry? 
+                // Or just leave it. Let's leave it for now but maybe warn.
+                conversationHistory.pop(); // Remove failed user message to allow retry without dupes
                 addMessage('assistant', 'Error: ' + (response.error || 'Unknown error'));
             }
         });

@@ -75,23 +75,31 @@ async function undoLast() {
 /* Chat Logic */
 async function performAiChat(request, sendResponse) {
   try {
-    const { message, model, images } = request; // images is array of base64 strings
+    const { message, model, images, history } = request; // history is array of messages
     const { ai, ai_custom } = await chrome.storage.sync.get(['ai', 'ai_custom']);
     const { ai_key } = await chrome.storage.local.get('ai_key');
     const key = ai_key || ai?.key;
 
     if (!key) { return sendResponse({ error: 'API key not found' }); }
 
-    let url, headers, userContent;
+    let url, headers;
 
-    // Prepare content (text or multimodal)
-    if (images && images.length > 0) {
-      userContent = [
-        { type: "text", text: message },
-        ...images.map(img => ({ type: "image_url", image_url: { url: img } }))
-      ];
+    // Use history if available, otherwise construct single message
+    let messagesPayload = [];
+    if (history && Array.isArray(history)) {
+      messagesPayload = history;
     } else {
-      userContent = message;
+      // Legacy Fallback
+      let userContent;
+      if (images && images.length > 0) {
+        userContent = [
+          { type: "text", text: message },
+          ...images.map(img => ({ type: "image_url", image_url: { url: img } }))
+        ];
+      } else {
+        userContent = message;
+      }
+      messagesPayload = [{ role: 'user', content: userContent }];
     }
 
     // Build Request
@@ -114,7 +122,7 @@ async function performAiChat(request, sendResponse) {
 
     const body = JSON.stringify({
       model: model || ((ai.provider === 'openai') ? 'gpt-3.5-turbo' : ai_custom?.model),
-      messages: [{ role: 'user', content: userContent }]
+      messages: messagesPayload
     });
 
     const res = await fetch(url, { method: 'POST', headers, body });
